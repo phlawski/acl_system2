@@ -30,7 +30,9 @@ module Caboose
             if c.respond_to?:permission_denied
               c.send(:permission_denied)
             else  
-              c.send(:render, :text => "You have insuffient permissions to access #{c.controller_name}/#{c.action_name}")
+              # Default message translated via I18n backend engine
+              # Just put translation for :insufficient_permission key in your i18n yml
+              c.send(:render, :text => I18n.t(:insufficient_permission) + "#{c.controller_name}/#{c.action_name}")
             end
           end
         end
