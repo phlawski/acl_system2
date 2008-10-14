@@ -32,7 +32,7 @@ module Caboose
             else  
               # Default message translated via I18n backend engine
               # Just put translation for :insufficient_permission key in your i18n yml
-              c.send(:render, :text => I18n.t(:insufficient_permission) + "#{c.controller_name}/#{c.action_name}")
+              c.send(:render, :text => I18n.t(:insufficient_permission) + " (#{c.controller_name}/#{c.action_name}) ", :status => 401)
             end
           end
         end
