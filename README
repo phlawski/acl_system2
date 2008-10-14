@@ -3,7 +3,7 @@ flexible declarative way of protecting your various controller actions using rol
 It's made to site on top of any authentication framework that follows a few conventions.
 You will need to have a current_user method that returns the currently logged in user. 
 And you will need to make your User or Account model(or whatever you named it) have a
-has_and_belongs_to_many :roles. So you need a model called Role that has a title attribute.
+has_and_belongs_to_many :roles. So you need a model called Role that has a name attribute.
 Once these two things are satisfied you can use this plugin.
 
 So lets take a look at the sugar you get from using this plugin. Keep in mind that the
@@ -77,35 +77,30 @@ current_user.roles.
 The way this works is that you have your User model and a Role model. User <= habtm => Role.
  So when an action that is access_control’ed gets requested the permission logic string 
 gets evaluated against the current_user.roles . So a prerequisite of using this plugin
- is that you add a Role model with a title attribute that has_and_belongs_to_many User
+ is that you add a Role model with a name attribute that has_and_belongs_to_many User
  models. And you need to have a current_user method defined somewhere in your controllers 
 or user system. Luckily the acts_as_authenticated plugin has the current_user defined already. 
 
 So here is the schema of this application including the Post model and the User and Role 
 model plus the habtm join table: 
 
-ActiveRecord::Schema.define(:version => 3) do
-  create_table "posts", :force => true do |t|
-    t.column "title", :string, :limit => 40
-    t.column "body", :text
-  end
-  create_table "roles", :force => true do |t|
-    t.column "title", :string
-  end
-  create_table "roles_users", :id => false, :force => true do |t|
-    t.column "role_id", :integer
-    t.column "user_id", :integer
-  end
-  create_table "users", :force => true do |t|
-    t.column "login", :string, :limit => 40
-    t.column "email", :string, :limit => 100
-    t.column "crypted_password", :string, :limit => 40 
-    t.column "salt", :string, :limit => 40
-    t.column "created_at", :datetime
-    t.column "updated_at", :datetime
-  end
-end
-And so thats pretty much it for now. You add the roles to the Role.title attribute like admin,
+ create_table :posts do |t|
+   t.string :name, :limit => 40
+   t.text :body"
+ end
+ create_table :roles do |t|
+   t.string :name, :description 
+ end
+ create_table :roles_users, :id => false do |t|
+   t.integer :role_id, :user_id
+ end
+ create_table :users do |t|
+   t.string :login, :crypted_password, :salt, :limit => 40
+   t.string :email, :limit => 100
+   t.timestamps
+ end
+
+And so thats pretty much it for now. You add the roles to the Role.name attribute like admin,
  moderator and blacklist like above. These can be anything you want them to be, roles, groups
  or whatever. Then you can use as many nested parens and logic with & | ! as you want to 
 define your complex permissions for accessing your controller. Make sure that your access_control
